@@ -1,121 +1,137 @@
-# 공통 설정
-# 우선순위 profile > 폴더 서비스명 > application 공통파일
+# ========================================
+# 공통 설정 파일
+# 우선순위: profile 설정 > 서비스별 폴더 설정 > common 설정
+# ========================================
+
 spring:
   cloud:
+    # ===== 로드 밸런서 설정 =====
     loadbalancer:
       ribbon:
-        enabled: false # Netflix Ribbon 대신 Spring Cloud LoadBalancer 사용
+        enabled: false  # Netflix Ribbon 비활성화, Spring Cloud LoadBalancer 사용
+
+    # ===== 서킷 브레이커 설정 =====
     circuitbreaker:
       resilience4j:
         enabled: true  # Resilience4j 회로 차단기 활성화
-
-        # 공통 템플릿(모든 인스턴스의 기본 값)
         configs:
-          default: # 기본 회로 차단기 설정
-            slidingWindowType: COUNT_BASED  # 호출 횟수 기반으로 슬라이딩 윈도우 설정 (TIME_BASED도 가능)
-            slidingWindowSize: 5  # 상태 결정을 위해 고려할 최근 호출 수
-            minimumNumberOfCalls: 1  # 회로 차단기가 결정을 내리기 위한 최소 호출 수
-            permittedNumberOfCallsInHalfOpenState: 2  # 반개방 상태에서 허용되는 호출 수
-            failureRateThreshold: 50  # 실패율이 50%를 초과하면 회로 차단 (% 기준)
-            waitDurationInOpenState: 5s  # 회로가 열린 상태로 유지되는 시간 (30초)
-            recordExceptions: # 실패로 간주할 예외 목록
+          default:  # 기본 회로 차단기 설정 (모든 인스턴스에 적용)
+            slidingWindowType: COUNT_BASED  # 호출 횟수 기반 슬라이딩 윈도우 (TIME_BASED: 시간 기반)
+            slidingWindowSize: 5  # 최근 5개의 호출을 기준으로 상태 결정
+            minimumNumberOfCalls: 1  # 회로 차단기 작동을 위한 최소 호출 수
+            permittedNumberOfCallsInHalfOpenState: 2  # 반개방 상태에서 허용되는 테스트 호출 수
+            failureRateThreshold: 50  # 실패율 50% 초과 시 회로 차단 (OPEN 상태로 전환)
+            waitDurationInOpenState: 5s  # 회로가 열린 후 반개방 상태로 전환되기까지 대기 시간
+            recordExceptions:  # 실패로 간주할 예외 목록
               - java.lang.RuntimeException
               - org.springframework.web.client.HttpServerErrorException
 
+  # ===== OAuth2 보안 설정 =====
   security:
     oauth2:
+      # Resource Server 설정 (JWT 토큰 검증)
       resourceserver:
         jwt:
-          issuer-uri: "https://keycloak.code-factory.co.kr/realms/codefactory"
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:https://keycloak.code-factory.co.kr/realms/codefactory}  # JWT 발급자 URI
+
+      # OAuth2 클라이언트 설정
       client:
         registration:
           keycloak:
-            client-id: ${KEYCLOAK_CLIENT_ID}
-            client-secret: ${KEYCLOAK_CLIENT_SECRET}
-            authorization-grant-type: authorization_code
-            redirect-uri: "http://localhost:3000/v1/user/authorization/code"
-            scope:
+            client-id: ${KEYCLOAK_CLIENT_ID}  # Keycloak 클라이언트 ID
+            client-secret: ${KEYCLOAK_CLIENT_SECRET}  # Keycloak 클라이언트 시크릿
+            authorization-grant-type: authorization_code  # 인증 코드 방식
+            redirect-uri: ${KEYCLOAK_REDIRECT_URI:http://localhost:8080/v1/user/authorization/code}  # 인증 후 리다이렉트 URI
+            scope:  # 요청할 권한 범위
               - openid
               - profile
               - email
         provider:
           keycloak:
-            issuer-uri: "https://keycloak.code-factory.co.kr/realms/codefactory"
+            issuer-uri: ${KEYCLOAK_ISSUER_URI:https://keycloak.code-factory.co.kr/realms/codefactory}
 
-
+  # ===== Keycloak 관리자 설정 =====
   keycloak:
-    server-url: https://keycloak.code-factory.co.kr
-    realm: codefactory
-    client-id: ${KEYCLOAK_CLIENT_ID}
-    client-secret: ${KEYCLOAK_CLIENT_SECRET}
-    admin-username: ${KEYCLOAK_ADMIN_USERNAME}
-    admin-password: ${KEYCLOAK_ADMIN_PASSWORD}
+    server-url: ${KEYCLOAK_SERVER_URL:https://keycloak.code-factory.co.kr}  # Keycloak 서버 URL
+    realm: ${KEYCLOAK_REALM:codefactory}  # Realm 이름
+    client-id: ${KEYCLOAK_CLIENT_ID}  # 클라이언트 ID
+    client-secret: ${KEYCLOAK_CLIENT_SECRET}  # 클라이언트 시크릿
+    admin-username: ${KEYCLOAK_ADMIN_USERNAME}  # 관리자 계정
+    admin-password: ${KEYCLOAK_ADMIN_PASSWORD}  # 관리자 비밀번호
 
+# ===== Feign 클라이언트 설정 =====
 feign:
   client:
     config:
-      default:  # 모든 클라이언트에 적용
-        connectTimeout: 5000 # 연결 시도(소켓 연결) 타임아웃: 밀리초 단위. 5000ms = 5초
-        readTimeout: 5000 # 서버 응답을 기다리는 읽기 타임아웃:
-        loggerLevel: full # 로거 레벨: NONE, BASIC, HEADERS, FULL 중 하나.
+      default:  # 모든 Feign 클라이언트에 적용되는 기본 설정
+        connectTimeout: 5000  # 연결 타임아웃: 5초 (소켓 연결 시도)
+        readTimeout: 5000  # 읽기 타임아웃: 5초 (서버 응답 대기)
+        loggerLevel: full  # 로깅 레벨: NONE, BASIC, HEADERS, FULL
 
-
+# ===== 모니터링 및 메트릭 설정 =====
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,prometheus,metrics, refresh
+        include: health,info,prometheus,metrics,refresh  # 노출할 actuator 엔드포인트
   endpoint:
     prometheus:
-      enabled: true
+      enabled: true  # Prometheus 메트릭 엔드포인트 활성화
     metrics:
-      enabled: true
+      enabled: true  # 메트릭 수집 활성화
     refresh:
-      enabled: true
+      enabled: true  # Config 갱신 엔드포인트 활성화
   metrics:
     export:
       prometheus:
-        enabled: true
+        enabled: true  # Prometheus 형식으로 메트릭 내보내기
     tags:
-      application: ${spring.application.name}
+      application: ${spring.application.name}  # 메트릭에 애플리케이션 이름 태그 추가
+
+  # ===== 분산 트레이싱 설정 =====
   zipkin:
     tracing:
-      endpoint: "http://host.docker.internal:9411/api/v2/spans" # Zipkin 수집 서버의 엔드포인트 URL을 입력합니다.
+      endpoint: ${ZIPKIN_ENDPOINT:http://host.docker.internal:9411/api/v2/spans}  # Zipkin 서버 엔드포인트
   tracing:
     sampling:
-      probability: 1.0
+      probability: ${TRACING_PROBABILITY:1.0}  # 트레이싱 샘플링 비율 (1.0 = 100% 수집)
 
-#logging:
-#  level:
-#    feign: DEBUG
-
+# ===== Resilience4j 상세 설정 =====
 resilience4j:
-  retry:  # 재시도 설정
+  # ===== 재시도 설정 =====
+  retry:
     configs:
-      default:  # 기본 재시도 설정
-        maxAttempts: 3  # 최대 3회 재시도
-        waitDuration: 1s  # 재시도 간 1초 대기
-        enableExponentialBackoff: true  # 지수 백오프 활성화 (재시도마다 대기 시간 증가)
-        exponentialBackoffMultiplier: 2.0  # 각 재시도마다 대기 시간이 2배로 증가
+      default:
+        maxAttempts: 3  # 최대 재시도 횟수 (원본 호출 1회 + 재시도 2회)
+        waitDuration: 1s  # 재시도 간 대기 시간
+        enableExponentialBackoff: true  # 지수 백오프 활성화
+        exponentialBackoffMultiplier: 2.0  # 재시도마다 대기 시간 2배 증가 (1s → 2s → 4s)
         retryExceptions:  # 재시도할 예외 목록
           - java.lang.RuntimeException
 
-  bulkhead:  # 벌크헤드 설정 (동시 호출 제한)
+  # ===== 벌크헤드 설정 (동시 호출 제한) =====
+  bulkhead:
     configs:
-      default:  # 기본 벌크헤드 설정
-        type: THREADPOOL  # 스레드풀 타입 벌크헤드 사용 (SEMAPHORE 대신)
-        coreThreadPoolSize: 5  # 스레드풀의 기본 스레드 수 (항상 활성 상태로 유지)
-        maxThreadPoolSize: 10  # 스레드풀의 최대 스레드 수 (부하 증가 시 확장)
-        queueCapacity: 50  # 모든 스레드가 사용 중일 때 대기할 수 있는 요청 수
+      default:
+        type: THREADPOOL  # 스레드풀 격리 방식 (SEMAPHORE: 세마포어 방식)
+        coreThreadPoolSize: 5  # 기본 스레드 수 (항상 활성 유지)
+        maxThreadPoolSize: 10  # 최대 스레드 수 (부하 증가 시 확장)
+        queueCapacity: 50  # 대기 큐 용량 (모든 스레드 사용 중일 때 대기 가능한 요청 수)
 
-  ratelimiter:  # 속도 제한 설정
+  # ===== 속도 제한 설정 (Rate Limiter) =====
+  ratelimiter:
     configs:
       default:  # 기본 속도 제한 설정
-        limitForPeriod: 50  # 주기당 최대 50개 요청 허용
-        limitRefreshPeriod: 1s  # 제한이 1초마다 초기화됨
-        timeoutDuration: 0ms  # 허가 대기 시간 (0ms는 대기 없이 즉시 거부)
+        limitForPeriod: 50  # 주기당 최대 허용 요청 수
+        limitRefreshPeriod: 1s  # 제한 갱신 주기 (1초마다 리셋)
+        timeoutDuration: 0ms  # 허가 대기 시간 (0ms: 즉시 거부)
     instances:
-      externalService:  # 'externalService'라는 이름의 속도 제한 인스턴스
+      externalService:  # 'externalService'라는 이름의 커스텀 인스턴스
         baseConfig: default  # 기본 설정 상속
-        limitForPeriod: 20  # 기본 설정 오버라이드: 주기당 20개로 제한
-        limitRefreshPeriod: 1s  # 1초 주기 유지
+        limitForPeriod: 20  # 주기당 20개로 제한 (기본값 오버라이드)
+        limitRefreshPeriod: 1s
+
+# ===== 로깅 설정 (주석 처리) =====
+# logging:
+#   level:
+#     feign: DEBUG  # Feign 클라이언트 디버그 로깅 (필요 시 활성화)
