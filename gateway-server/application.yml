@@ -7,12 +7,12 @@ spring:
           lower-case-service-id: true
 
       routes:
-        - id: hub-service
-          uri: lb://hub-service
+        - id: default-server
+          uri: lb://DEFAULT-SERVER
           predicates:
-            - Path=/v1/hub/**
+            - Path=/v1/default/**
           filters:
-            - 'RewritePath=/v1/hub/(?<path>.*), /${path}'
+            - 'RewritePath=/v1/default/(?<path>.*), /${path}'
 
         - id: product-service
           uri: lb://product-service
