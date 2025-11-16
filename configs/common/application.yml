@@ -122,7 +122,7 @@ spring:
       resourceserver:
         jwt:
           # JWT 발급자 URI (Keycloak Realm 엔드포인트)
-          issuer-uri: ${KEYCLOAK_ISSUER_URI:https://keycloak.code-factory.co.kr/realms/codefactory}
+          issuer-uri: ${KEYCLOAK_ISSUER_URI:}
 
       # ----- OAuth2 Client 설정 -----
       client:
@@ -131,20 +131,20 @@ spring:
             client-id: ${KEYCLOAK_CLIENT_ID}  # Keycloak 클라이언트 ID
             client-secret: ${KEYCLOAK_CLIENT_SECRET}  # Keycloak 클라이언트 시크릿
             authorization-grant-type: authorization_code  # OAuth2 인증 방식
-            redirect-uri: ${KEYCLOAK_REDIRECT_URI:http://localhost:8080/v1/user/authorization/code}  # 인증 후 리다이렉트 URI
+            redirect-uri: ${KEYCLOAK_REDIRECT_URI}  # 인증 후 리다이렉트 URI
             scope:  # 요청할 권한 범위
               - openid  # OpenID Connect 사용
               - profile  # 사용자 프로필 정보
               - email  # 이메일 정보
         provider:
           keycloak:
-            issuer-uri: ${KEYCLOAK_ISSUER_URI:https://keycloak.code-factory.co.kr/realms/codefactory}
+            issuer-uri: ${KEYCLOAK_ISSUER_URI}
 
   # ===== Keycloak Admin 설정 =====
   # Keycloak 서버 관리를 위한 설정
   keycloak:
-    server-url: ${KEYCLOAK_SERVER_URL:https://keycloak.code-factory.co.kr}  # Keycloak 서버 URL
-    realm: ${KEYCLOAK_REALM:codefactory}  # Realm 이름
+    server-url: ${KEYCLOAK_SERVER_URL}  # Keycloak 서버 URL
+    realm: ${KEYCLOAK_REALM}  # Realm 이름
     client-id: ${KEYCLOAK_CLIENT_ID}  # 관리용 클라이언트 ID
     client-secret: ${KEYCLOAK_CLIENT_SECRET}  # 관리용 클라이언트 시크릿
     admin-username: ${KEYCLOAK_ADMIN_USERNAME}  # 관리자 계정
