@@ -1,7 +1,7 @@
 # ========================================
 # Config Server - 개발 환경 전용 설정 (application-dev.yml)
 # H2 인메모리 데이터베이스 및 개발 편의 기능 활성화
-# 우선순위: application-dev.yml > application.yml
+# 우선순위: application-dev.yml > gateway-server.yml
 # ========================================
 
 spring:
