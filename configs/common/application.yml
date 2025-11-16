@@ -150,6 +150,18 @@ spring:
     admin-username: ${KEYCLOAK_ADMIN_USERNAME}  # 관리자 계정
     admin-password: ${KEYCLOAK_ADMIN_PASSWORD}  # 관리자 비밀번호
 
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    operations-sorter: alpha
+    tags-sorter: alpha
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+
 # ===== Actuator 모니터링 설정 =====
 # 애플리케이션 상태 모니터링 및 관리를 위한 설정
 management:
