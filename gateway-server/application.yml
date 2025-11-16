@@ -12,11 +12,11 @@ spring:
           predicates:
             - Path=/v1/default/**
           filters:
-            - 'RewritePath=/v1/default/(?<path>.*), /${path}'
+            - RewritePath=/v1/default(?<segment>/?.*), $\{segment}
 
         - id: product-service
           uri: lb://product-service
           predicates:
             - Path=/v1/product/**
           filters:
-            - 'RewritePath=/v1/product/(?<path>.*), /${path}'
+            - RewritePath=/v1/product(?<segment>/?.*), $\{segment}
