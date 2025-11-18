@@ -20,6 +20,14 @@ spring:
             - Path=/v1/product/**
           filters:
             - RewritePath=/v1/product(?<segment>/?.*), $\{segment}
+
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/v1/inventory/**
+          filters:
+            - RewritePath=/v1/inventory(?<segment>/?.*), $\{segment}
+
         - id: user-service
           uri: lb://user-service
           predicates:
