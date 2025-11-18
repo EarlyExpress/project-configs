@@ -175,8 +175,16 @@ management:
     health:
       show-details: always  # 상세 정보 항상 표시
     # Prometheus 메트릭 엔드포인트
+#    prometheus:
+#      enabled: true  # Prometheus 메트릭 수집 활성화
     prometheus:
-      enabled: true  # Prometheus 메트릭 수집 활성화
+      enabled: true
+      pushgateway:
+        enabled: ${PROMETHEUS_PUSHGATEWAY_ENABLED:false}
+        base-url: ${PROMETHEUS_PUSHGATEWAY_URL:http://localhost:9091}
+        job: ${PROMETHEUS_PUSHGATEWAY_JOB:${spring.application.name}}
+        push-rate: ${PROMETHEUS_PUSHGATEWAY_PUSH_INTERVAL:1m}
+        shutdown-operation: push  # 종료 시 마지막 메트릭 전송
     # 메트릭 엔드포인트
     metrics:
       enabled: true  # 메트릭 수집 활성화
