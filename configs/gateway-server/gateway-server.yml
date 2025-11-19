@@ -28,6 +28,13 @@ spring:
           filters:
             - RewritePath=/v1/inventory(?<segment>/?.*), $\{segment}
 
+        - id: delivery-service
+          uri: lb://delivery-service
+          predicates:
+            - Path=/v1/delivery/**
+          filters:
+            - RewritePath=/v1/delivery(?<segment>/?.*), $\{segment}
+
         - id: hub-service
           uri: lb://hub-service
           predicates:
