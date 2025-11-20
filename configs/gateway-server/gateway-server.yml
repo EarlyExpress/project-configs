@@ -42,9 +42,16 @@ spring:
           filters:
             - RewritePath=/v1/hub(?<segment>/?.*), $\{segment}
 
-        - id: user-service
+        - id: user-service-auth
           uri: lb://user-service
           predicates:
             - Path=/v1/auth/**
           filters:
             - 'RewritePath=/v1/auth/(?<path>.*), /\${path}'
+
+        - id: user-service-user
+          uri: lb://user-service
+          predicates:
+            - Path=/v1/user/**
+          filters:
+            - 'RewritePath=/v1/user/(?<path>.*), /\${path}'
