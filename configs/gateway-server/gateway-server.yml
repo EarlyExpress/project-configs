@@ -41,6 +41,13 @@ spring:
             - Path=/v1/hub/**
           filters:
             - RewritePath=/v1/hub(?<segment>/?.*), $\{segment}
+            
+        - id: slack-service
+          uri: lb://slack-service
+          predicates:
+            - Path=/v1/slack/**
+          filters:
+            - RewritePath=/v1/slack(?<segment>/?.*), $\{segment}
 
         - id: user-service-auth
           uri: lb://user-service
