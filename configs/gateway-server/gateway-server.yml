@@ -54,11 +54,11 @@ spring:
           predicates:
             - Path=/v1/auth/**
           filters:
-            - 'RewritePath=/v1/auth/(?<path>.*), /\${path}'
+            - RewritePath=/v1/(?<service>auth)/(?<remaining>.*), /${service}/${remaining}
 
         - id: user-service-user
           uri: lb://user-service
           predicates:
             - Path=/v1/user/**
           filters:
-            - 'RewritePath=/v1/user/(?<path>.*), /\${path}'
+            - RewritePath=/v1/(?<service>user)/(?<remaining>.*), /${service}/${remaining}
