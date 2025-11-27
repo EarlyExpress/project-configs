@@ -7,34 +7,6 @@ spring:
           lower-case-service-id: true
 
       routes:
-        - id: default-server
-          uri: lb://DEFAULT-SERVER
-          predicates:
-            - Path=/v1/default/**
-          filters:
-            - RewritePath=/v1/default(?<segment>/?.*), $\{segment}
-
-        - id: product-service
-          uri: lb://product-service
-          predicates:
-            - Path=/v1/product/**
-          filters:
-            - RewritePath=/v1/product(?<segment>/?.*), $\{segment}
-
-        - id: inventory-service
-          uri: lb://inventory-service
-          predicates:
-            - Path=/v1/inventory/**
-          filters:
-            - RewritePath=/v1/inventory(?<segment>/?.*), $\{segment}
-
-        - id: delivery-service
-          uri: lb://delivery-service
-          predicates:
-            - Path=/v1/delivery/**
-          filters:
-            - RewritePath=/v1/delivery(?<segment>/?.*), $\{segment}
-
         - id: hub-service
           uri: lb://hub-service
           predicates:
@@ -69,3 +41,80 @@ spring:
             - Path=/v1/company/**
           filters:
             - "RewritePath=/v1/company(?:/(?<path>.*))?, /\\${path}"
+        # ===== Hub Service =====
+        - id: hub-service
+          uri: lb://hub-service
+          predicates:
+            - Path=/v1/hub/**
+
+        # ===== Product Service =====
+        - id: product-service
+          uri: lb://product-service
+          predicates:
+            - Path=/v1/product/**
+
+        # ===== Inventory Service =====
+        - id: inventory-service
+          uri: lb://inventory-service
+          predicates:
+            - Path=/v1/inventory/**
+
+        # ===== Order Service =====
+        - id: order-service
+          uri: lb://order-service
+          predicates:
+            - Path=/v1/order/**
+
+        # ===== Payment Service =====
+        - id: payment-service
+          uri: lb://payment-service
+          predicates:
+            - Path=/v1/payment/**
+
+        # ===== Track Service =====
+        - id: track-service
+          uri: lb://track-service
+          predicates:
+            - Path=/v1/track/**
+
+        # ===== Hub Delivery Service =====
+        - id: hub-delivery-service
+          uri: lb://hub-delivery-service
+          predicates:
+            - Path=/v1/hub-delivery/**
+
+        # ===== Hub Driver Service =====
+        - id: hub-driver-service
+          uri: lb://hub-driver-service
+          predicates:
+            - Path=/v1/hub-driver/**
+
+        # ===== Last Mile Driver Service =====
+        - id: last-mile-driver-service
+          uri: lb://last-mile-driver-service
+          predicates:
+            - Path=/v1/last-mile-driver/**
+
+        # ===== Delivery Service =====
+        - id: delivery-service
+          uri: lb://delivery-service
+          predicates:
+            - Path=/v1/delivery/**
+
+        # ===== Company Service =====
+        - id: company-service
+          uri: lb://company-service
+          predicates:
+            - Path=/v1/company/**
+
+        # ===== AI Service =====
+        - id: ai-service
+          uri: lb://ai-service
+          predicates:
+            - Path=/v1/aiagent/**
+
+        # ===== Slack Service =====
+        - id: slack-service
+          uri: lb://slack-service
+          predicates:
+            - Path=/v1/slack/**
