@@ -123,19 +123,22 @@ spring:
           issuer-uri: ${KEYCLOAK_ISSUER_URI:}  # 비어있으면 비활성화
 
 # ===== 로깅 설정 (개발 환경) =====
+# logging:
+#   level:
+#     # 개발 환경에서 상세 로깅
+#     com.earlyexpress: DEBUG  # 자체 패키지 디버그
+#     org.springframework: DEBUG  # Spring 프레임워크 디버그
+#     org.springframework.web: DEBUG  # Spring Web 디버그
+#     org.springframework.cloud: DEBUG  # Spring Cloud 디버그
+#     org.springframework.kafka: DEBUG  # Kafka 디버그
+#     org.hibernate.SQL: DEBUG  # Hibernate SQL 로깅
+#     org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # SQL 파라미터 로깅
+#     org.hibernate.stat: DEBUG  # Hibernate 통계
+#     feign: DEBUG  # Feign 클라이언트 디버그
+#     com.netflix: DEBUG  # Netflix 컴포넌트 디버그
 logging:
   level:
-    # 개발 환경에서 상세 로깅
-    com.earlyexpress: DEBUG  # 자체 패키지 디버그
-    org.springframework: DEBUG  # Spring 프레임워크 디버그
-    org.springframework.web: DEBUG  # Spring Web 디버그
-    org.springframework.cloud: DEBUG  # Spring Cloud 디버그
-    org.springframework.kafka: DEBUG  # Kafka 디버그
-    org.hibernate.SQL: DEBUG  # Hibernate SQL 로깅
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # SQL 파라미터 로깅
-    org.hibernate.stat: DEBUG  # Hibernate 통계
-    feign: DEBUG  # Feign 클라이언트 디버그
-    com.netflix: DEBUG  # Netflix 컴포넌트 디버그
+    root: INFO    
   pattern:
     # 개발용 로그 패턴 (컬러 출력)
     console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%thread]){cyan} %clr(%-5level) %clr(%logger{36}){magenta} - %msg%n"
